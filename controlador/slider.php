@@ -5,24 +5,44 @@
                 <li class="menu-title">
                     <span>Menu Principal</span>
                 </li>
-                <li>
-                    <a class="" href="ventas.php"><i class="fas fa-holly-berry"></i><span> Ventas</span></a>
+                <li class="" >
+                    <a href="ventas.php"><i class="fas fa-holly-berry"></i><span> Ventas</span></a>
                 </li>
-                <li>
-                    <a class="" href="compras.php"><i class="fas fa-holly-berry"></i><span> Compras</span></a>
+                <li class="" >
+                    <a href="compras.php"><i class="fas fa-holly-berry"></i><span> Compras</span></a>
                 </li>
-                <li>
-                    <a class="" href="catalogos.php"><i class="fas fa-holly-berry"></i><span> Catalogos</span></a>
+                
+                <li class="menu-title">
+                    <span>Reportes</span>
                 </li>
-                <li>
-                    <a class="" href="detalle_insumos.php"><i class="fas fa-holly-berry"></i><span> Regla Insumos</span></a>
+                <li class="submenu ">
+                    <a href="#"><i class="fas fa-file-invoice-dollar"></i><span> Reporte Financiero</span><span class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a class="" href="#">Rentabilidad</a></li>
+                        <li><a class="" href="#">Ingresos</a></li>
+                        <li><a class="" href="#">Egresos</a></li>
+                        <li><a class="" href="#">Planilla</a></li>
+
+                    </ul>
+                </li>
+                <li class="menu-title">
+                    <span>Productos</span>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-file-invoice-dollar"></i><span> Productos</span><span class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a class="" href="#">Productos</a></li>
+                        <li><a class="" href="catalogos.php">Catalogos</a></li>
+                        <li><a class="" href="detalle_insumos.php">Regla Insumos</a></li>
+
+                    </ul>
                 </li>
 
 
                 <li class="menu-title">
                     <span>Inventarios</span>
                 </li>
-                <li class="submenu">
+                <li class="submenu ">
                     <a href="#"><i class="fas fa-file-invoice-dollar"></i><span> Inventarios</span><span class="menu-arrow"></span></a>
                     <ul>
                         <li><a class="" href="insumos.php">Insumos</a></li>
@@ -47,7 +67,7 @@
                 <li class="menu-title">
                     <span>Personal</span>
                 </li>
-                <li class="submenu">
+                <li class="submenu ">
                     <a href="#"><i class="fas fa-file-invoice-dollar"></i><span> Personal</span><span class="menu-arrow"></span></a>
                     <ul>
                         <li><a class="" href="personal.php">Personal</a></li>
@@ -60,12 +80,12 @@
                 <li class="menu-title">
                     <span>Administración</span>
                 </li>
-                <li class="submenu">
+                <li class="submenu ">
                     <a href="#"><i class="fas fa-file-invoice-dollar"></i><span> Administración</span><span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a class="" href="usuarios.php">Usuarios</a></li>
-                        <li><a class="" href="roles.php">Roles</a></li>
-                        <li><a class="" href="tipo_comprobante.php">Tipos de Comprobantes</a></li>
+                        <li ><a class=""  href="usuarios.php">Usuarios</a></li>
+                        <li ><a class=""  href="roles.php">Roles</a></li>
+                        <li ><a class="" href="tipo_comprobante.php">Tipos de Comprobantes</a></li>
 
                     </ul>
                 </li>

@@ -208,13 +208,97 @@ function eliminarDato($idcatalogo, $idinsumo)
 
 
 
-function filtradorDatoInsumos($dto)
-{
-    global $conexion;
 
+
+function obtenerProducto($productoDato) {
+    global $conexion;
     try {
-        $sql = "SELECT idinsumo, nombre_insumo from insumos
-            WHERE nombre_insumo LIKE CONCAT('%', ?, '%');";
+        error_log("Producto recibido: " . $productoDato);
+        $sql = "SELECT precio_venta, stock_producto
+                FROM productos AS pr
+                INNER JOIN catalogos AS ca ON ca.idcatalogo = pr.fk_idcatalogo
+                INNER JOIN categorias AS c ON c.idcategoria = ca.fk_idcategoria
+                INNER JOIN sabores AS s ON s.idsabor = ca.fk_idsabor
+                INNER JOIN presentaciones AS p ON p.idpresentacion = ca.fk_idpresentacion
+                WHERE CONCAT(categoria, ' - ', sabor, ' (', presentacion, ')') = ?";
+
+        if ($stmt = $conexion->prepare($sql)) {
+            $stmt->bind_param("s", $productoDato);
+            $stmt->execute();
+
+            $resultado = $stmt->get_result();
+
+            if ($row = $resultado->fetch_assoc()) {
+                return json_encode([
+                    "success" => true,
+                    "data" => [
+                        "precio_venta" => $row['precio_venta'],
+                        "stock_producto" => $row['stock_producto']
+                    ]
+                ]);
+            } else {
+                return json_encode(["success" => false, "message" => "No se encontraron datos."]);
+            }
+        } else {
+            return json_encode(["success" => false, "message" => "Error al preparar la consulta: " . $conexion->error]);
+        }
+    } catch (Exception $e) {
+        return json_encode(["success" => false, "message" => "Error en la consulta: " . $e->getMessage()]);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function generarNumeroComprobante($idTipoComprobante) {
+    global $conexion;
+    try {
+        $sql = "SELECT MAX(num_comprobanteV) AS max_numero FROM comprobantes AS c
+                INNER JOIN tipo_comprobantes AS t ON t.idtipo_comprobante = c.fk_idtipo_comprobanteV
+                WHERE idtipo_comprobante = ?";
+        
+        if ($stmt = $conexion->prepare($sql)) {
+            $stmt->bind_param("i", $idTipoComprobante);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            $row = $resultado->fetch_assoc();
+
+            if ($row && $row['max_numero'] !== null) {
+                $nuevoNumero = intval($row['max_numero']) + 1;
+                $numeroFormateado = str_pad($nuevoNumero, 12, "0", STR_PAD_LEFT);
+
+                return json_encode(["success" => true, "num_comprobanteV" => $numeroFormateado]);
+            } else {
+                $numeroInicial = str_pad(1, 12, "0", STR_PAD_LEFT);
+                return json_encode(["success" => true, "num_comprobanteV" => $numeroInicial]);
+            }
+        } else {
+            return json_encode(["success" => false, "message" => "Error al preparar la consulta: " . $conexion->error]);
+        }
+    } catch (Exception $e) {
+        return json_encode(["success" => false, "message" => "Error en la consulta: " . $e->getMessage()]);
+    }
+}
+
+function filtradorDatoProductos($dto){
+    global $conexion;
+    try {
+        $sql = "SELECT idproducto, concat(categoria, ' - ', sabor, ' (', presentacion,')') as 'producto', precio_venta, stock_producto
+                from productos as pr
+                inner join catalogos as ca on ca.idcatalogo=pr.fk_idcatalogo
+                inner join categorias as c on c.idcategoria=ca.fk_idcategoria
+                inner join sabores as s on s.idsabor=ca.fk_idsabor
+                inner join presentaciones as p on p.idpresentacion=ca.fk_idpresentacion
+            WHERE concat(categoria, ' - ', sabor, ' (', presentacion,')') LIKE CONCAT('%', ?, '%');";
 
         if ($stmt = $conexion->prepare($sql)) {
             $stmt->bind_param("s", $dto);
@@ -224,8 +308,10 @@ function filtradorDatoInsumos($dto)
             $data = [];
             while ($row = $resultado->fetch_assoc()) {
                 $data[] = [
-                    "val1" => $row['idinsumo'],
-                    "val2" => $row['nombre_insumo']
+                    "val1" => $row['idproducto'],
+                    "val2" => $row['producto'],
+                    "val3" => $row['precio_venta'],
+                    "val4" => $row['stock_producto']
                 ];
             }
 
@@ -241,47 +327,6 @@ function filtradorDatoInsumos($dto)
         return json_encode(["success" => false, "message" => "Error en la consulta: " . $e->getMessage()]);
     }
 }
-
-
-function filtradorDatoProveedor($dto)
-{
-    global $conexion;
-
-    try {
-        $sql = "SELECT dni, concat_ws(' ',apellidos,nombres) as 'proveedor', RUC, nombre_empresa
-                from proveedores as po
-                inner join empresas as e on e.idempresa=po.fk_idempresa
-                inner join personas as p on p.dni=po.fk_dniP
-            WHERE cond=0 AND (concat_ws(' ',apellidos,nombres) LIKE CONCAT('%', ?, '%') OR dni LIKE CONCAT('%', ?, '%'));";
-
-        if ($stmt = $conexion->prepare($sql)) {
-            $stmt->bind_param("ss", $dto, $dto);
-            $stmt->execute();
-            $resultado = $stmt->get_result();
-
-            $data = [];
-            while ($row = $resultado->fetch_assoc()) {
-                $data[] = [
-                    "val1" => $row['dni'],
-                    "val2" => $row['proveedor'],
-                    "val3" => $row['RUC'],
-                    "val4" => $row['nombre_empresa']
-                ];
-            }
-
-            if (!empty($data)) {
-                return json_encode(["success" => true, "data" => $data]);
-            } else {
-                return json_encode(["success" => false, "message" => "No se encontraron datos."]);
-            }
-        } else {
-            return json_encode(["success" => false, "message" => "Error al preparar la consulta: " . $conexion->error]);
-        }
-    } catch (Exception $e) {
-        return json_encode(["success" => false, "message" => "Error en la consulta: " . $e->getMessage()]);
-    }
-}
-
 
 function obtenerOpciones()
 {
@@ -352,18 +397,13 @@ if (isset($_POST['ev'])) {
         case 4:
             if (isset($_POST['entrada'])) {
                 $entrada = trim($_POST['entrada']);
-                echo filtradorDatoInsumos($entrada);
-            } else {
-                echo json_encode(["success" => false, "message" => "Falta el parámetro 'entrada'."]);
+                echo filtradorDatoProductos($entrada);
             }
             break;
         case 5:
-            if (isset($_POST['entrada'])) {
-                $entrada = trim($_POST['entrada']);
-                echo filtradorDatoProveedor($entrada);
-            } else {
-                echo json_encode(["success" => false, "message" => "Falta el parámetro 'entrada'."]);
-            }
+                echo generarNumeroComprobante(
+                    $_POST['idtipo_comprobante']
+                );
             break;
 
         case 6:
@@ -375,6 +415,12 @@ if (isset($_POST['ev'])) {
                 $_POST['precio'],
                 $_POST['fecha'],
                 $_POST['insumo']
+            );
+            break;
+
+        case 7:
+            echo obtenerProducto(
+                $_POST['producto']
             );
             break;
     }

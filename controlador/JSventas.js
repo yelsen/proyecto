@@ -1,12 +1,25 @@
 $(document).ready(function () {
     cargarOpciones("#cbComprobante", "obtenerOpciones");
-    listadoInsumo("txtProductos", "listaProductos");
-    listadoProveedor("txtProveedor", "listaProveedor");
+    listadoProductos("txtProductos", "lista");
     mostrar("");
     $("#txbuscar").on("keyup", function () {
         mostrar($(this).val());
     });
+
+    $("#cbComprobante").on("change", function () {
+        const selectedValue = $(this).val(); 
+        if (selectedValue) {
+            mostrarNumero(selectedValue);
+        }
+    });
+    
 });
+
+
+
+
+
+
 
 
 
@@ -128,25 +141,23 @@ function limpiarFormulario() {
     $("#txtProductos").val("");
     $("#txtPrecio").val("");
     $("#txtStock").val("");
-    $("#txtFecha").val("");
+    $("#txtCantidad").val("");
 }
 
+
+
 function agregarFila() {
-    const insumo = $("#txtProductos").val().trim();
-    const precio = parseFloat($("#txtStock").val().trim());
-    const stock = parseFloat($("#txtCantidad").val().trim());
-    const fecha = $("#txtPrecio").val().trim();
+    const producto = $("#txtProductos").val().trim();
+    const stock = parseFloat($("#txtStock").val().trim());
+    const cantidad = parseInt($("#txtCantidad").val().trim(), 10);
+    const precio = parseFloat($("#txtPrecio").val().trim());
 
+    if (cantidad > stock) {
+        mostrarAlerta("Error", "La cantidad no puede superar el stock", "danger");
+        return;
+    }
 
-
-    $("#txtProductos").val("");
-    $("#txtStock").val("");
-    $("#txtCantidad").val("");
-    $("#txtPrecio").val("");
-
-
-
-    if (!insumo || isNaN(precio) || isNaN(stock) || !fecha) {
+    if (!producto || isNaN(precio) || isNaN(cantidad) || cantidad <= 0) {
         mostrarAlerta("Error", "Ningún campo puede estar vacío o contener datos inválidos", "danger");
         return;
     }
@@ -154,28 +165,37 @@ function agregarFila() {
     const tableBody = $("#tabla-body");
     let existingRow = null;
     tableBody.find("tr").each(function () {
-        const rowInsumo = $(this).find("td:nth-child(2) input").val();
+        const rowProducto = $(this).find("td:nth-child(2) textarea").val();
         const rowPrecio = parseFloat($(this).find("td:nth-child(3) input").val());
-        if (rowInsumo === insumo && rowPrecio === precio) {
+        if (rowProducto === producto && rowPrecio === precio) {
             existingRow = $(this);
             return false;
         }
     });
 
     if (existingRow) {
-        const existingCantidad = parseFloat(existingRow.find("td:nth-child(4) input").val());
-        const newCantidad = existingCantidad + stock;
-        existingRow.find("td:nth-child(4) input").val(newCantidad.toFixed(2));
-        actualizarTotal(precio * stock);
+        const existingCantidad = parseInt(existingRow.find("td:nth-child(4) input").val(), 10);
+        const newCantidad = existingCantidad + cantidad;
+
+        if (newCantidad > stock) {
+            mostrarAlerta("Error", "La cantidad total no puede superar el stock", "danger");
+        } else {
+            existingRow.find("td:nth-child(4) input").val(newCantidad);
+            const newSubtotal = newCantidad * precio;
+            existingRow.find("td:nth-child(5) input").val(newSubtotal.toFixed(2));
+            actualizarTotal(newSubtotal - (existingCantidad * precio));
+        }
     } else {
         const rowCount = tableBody.find("tr").length + 1;
+        const subtotal = precio * cantidad;
         const row = $("<tr>").addClass("add-row");
+
         row.append(`
             <td><input type="text" class="form-control readonly-input" value="${rowCount}" readonly></td>
-            <td><input type="text" class="form-control readonly-input" value="${insumo}" readonly></td>
-            <td><input type="number" class="form-control readonly-input" value="${precio.toFixed(2)}" step="any"></td>
-            <td><input type="number" class="form-control readonly-input" value="${stock}" step="any"></td>
-            <td><input type="date" class="form-control readonly-input" value="${fecha}" ></td>
+            <td><textarea class="form-control readonly-input" rows="1" readonly>${producto}</textarea></td>
+            <td><input type="number" class="form-control readonly-input" value="${precio.toFixed(2)}" readonly></td>
+            <td><input type="number" class="form-control readonly-input" value="${cantidad}" readonly></td>
+            <td><input type="number" class="form-control readonly-input" value="${subtotal.toFixed(2)}" readonly></td>
             <td class="text-end">
                 <div class="btn-group">
                     <button title="Eliminar datos" type="button" class="btn btn-danger">
@@ -184,18 +204,19 @@ function agregarFila() {
                 </div>
             </td>
         `);
+
         row.find(".btn-danger").on("click", function () {
             const precioFila = parseFloat(row.find("td:nth-child(3) input").val());
-            const cantidadFila = parseFloat(row.find("td:nth-child(4) input").val());
+            const cantidadFila = parseInt(row.find("td:nth-child(4) input").val(), 10);
             const subtotalFila = precioFila * cantidadFila;
-
             actualizarTotal(-subtotalFila);
             row.remove();
         });
+
         tableBody.append(row);
-        actualizarTotal(precio * stock);
     }
-    limpiarFormulario();
+
+    limpiarFormulario();  
 }
 
 
@@ -203,13 +224,74 @@ function actualizarTotal(cambio) {
     const montoInput = $("#txtMonto_total");
     let montoActual = parseFloat(montoInput.val()) || 0; 
     montoActual += cambio;
-    console.log("Monto actualizado:", montoActual);
     montoInput.val(montoActual.toFixed(2)); 
 }
 
 
 
-function listadoInsumo(idInput, idLista) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function mostrarNumero(idComprobante) {
+    $.ajax({
+        url: '../modelo/DAOventas.php',
+        type: 'POST',
+        data: { 
+            ev: 5,
+            idtipo_comprobante: idComprobante 
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.success && response.num_comprobanteV) {
+                $("#txtNumero").val(response.num_comprobanteV); 
+            } else if (response.success) {
+                $("#txtNumero").val(""); 
+            } else {
+                $("#txtNumero").val("");
+                alert(response.message || "Error inesperado.");
+            }
+        },
+        error: function () {
+            alert("Error al obtener los datos del comprobante.");
+        }
+    });
+}
+
+
+function listadoProductos(idInput, idLista) {
     const input = document.getElementById(idInput);
     const lista = document.getElementById(idLista);
 
@@ -219,7 +301,7 @@ function listadoInsumo(idInput, idLista) {
 
         if (entrada) {
             $.ajax({
-                url: "../modelo/DAOcompras.php",
+                url: "../modelo/DAOventas.php",
                 type: "POST",
                 dataType: "json",
                 data: {
@@ -228,64 +310,8 @@ function listadoInsumo(idInput, idLista) {
                 },
                 success: function (response) {
                     if (response.success && Array.isArray(response.data)) {
-                        const filteredData = response.data.filter((item) =>
-                            item.val2.toLowerCase().includes(entrada)
-                        );
-
-                        filteredData.forEach((item) => {
-                            const li = document.createElement("li");
-                            li.classList.add(
-                                "list-group-item",
-                                "list-group-item-action",
-                                "border-0"
-                            );
-                            li.textContent = `${item.val2}`;
-                            li.addEventListener("click", () => {
-                                input.value = item.val2;
-                                lista.innerHTML = "";
-                            });
-                            lista.appendChild(li);
-                        });
-                    } else {
-                        console.error("El formato de los datos recibidos no es válido");
-                    }
-                },
-                error: function (error) {
-                    console.error("Error al consultar los datos del servidor:", error);
-                },
-            });
-        }
-    });
-
-    document.addEventListener("click", (event) => {
-        if (!input.contains(event.target) && !lista.contains(event.target)) {
-            lista.innerHTML = "";
-        }
-    });
-}
-
-function listadoProveedor(idInput, idLista) {
-    const input = document.getElementById(idInput);
-    const lista = document.getElementById(idLista);
-
-    input.addEventListener("input", () => {
-        const entrada = input.value.trim().toLowerCase();
-        lista.innerHTML = "";
-
-        if (entrada) {
-            $.ajax({
-                url: "../modelo/DAOcompras.php",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    ev: 5,
-                    entrada: entrada,
-                },
-                success: function (response) {
-                    if (response.success && Array.isArray(response.data)) {
                         const filteredData = response.data.filter(
                             (item) =>
-                                item.val1.toLowerCase().includes(entrada) ||
                                 item.val2.toLowerCase().includes(entrada) ||
                                 item.val3.toLowerCase().includes(entrada) ||
                                 item.val4.toLowerCase().includes(entrada)
@@ -298,11 +324,14 @@ function listadoProveedor(idInput, idLista) {
                                 "list-group-item-action",
                                 "border-0"
                             );
-                            li.textContent = `${item.val2} - DNI: ${item.val1}'`;
+                            li.textContent = `${item.val2} - Precio: ${item.val3} (${item.val4})`;
+                            
                             li.addEventListener("click", () => {
-                                input.value = item.val1;
+                                input.value = item.val2;
                                 lista.innerHTML = "";
+                                mostrarProducto(item.val2);
                             });
+
                             lista.appendChild(li);
                         });
                     } else {
@@ -323,9 +352,40 @@ function listadoProveedor(idInput, idLista) {
     });
 }
 
+
+function mostrarProducto(productoDato) {
+    $.ajax({
+        url: '../modelo/DAOventas.php',
+        type: 'POST',
+        data: { 
+            ev: 7, 
+            producto: productoDato
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(response);
+            if (response.success && response.data) {
+                $("#txtPrecio").val(response.data.precio_venta);  
+                $("#txtStock").val(response.data.stock_producto); 
+                const stockProducto = response.data.stock_producto;
+                $("#txtCantidad").attr("max", stockProducto);
+                $("#txtCantidad").val(Math.min($("#txtCantidad").val(), stockProducto));
+            } else {
+                $("#txtPrecio").val('');
+                $("#txtStock").val('');
+                alert("Producto no encontrado.");
+            }
+        },
+        error: function() {
+            alert("Error al obtener la información del producto.");
+        }
+    });
+}
+
+
 function cargarOpciones(idCombo, funcionVer) {
     $.ajax({
-        url: "../modelo/DAOcompras.php",
+        url: "../modelo/DAOventas.php",
         method: "GET",
         data: {
             funcion: funcionVer,
@@ -363,7 +423,6 @@ function mostrarAlerta(titulo, mensaje, tipo = "success") {
     alerta.removeClass("alert-success alert-danger alert-warning alert-info");
     alerta.addClass(`alert-${tipo}`);
     alerta.show();
-
     setTimeout(function () {
         alerta.fadeOut("slow");
     }, 3000);
