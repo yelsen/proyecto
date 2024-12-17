@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    cargarOpciones("#cbInsumos", "obtenerOpciones");
+    cargarOpciones("#cbInsumos","obtenerOpciones");
     listado("txtProductos", "lista");
     mostrar("");
     $('#txbuscar').on('keyup', function () {
@@ -29,7 +29,7 @@ function mostrar(dta) {
 
 
 
-$("#btnAñadir").on("click", function (e) {
+$("#btnAñadir").on("click", function(e) {
     e.preventDefault();
     const insumo = $("#cbInsumos").val().trim();
     const cantidad = parseFloat($("#txtCantidad").val().trim());
@@ -39,10 +39,10 @@ $("#btnAñadir").on("click", function (e) {
     }
     const tableBody = $("#table-body");
     let existingRow = null;
-    tableBody.find("tr").each(function () {
+    tableBody.find("tr").each(function() {
         const rowInsumo = $(this).find("td:nth-child(2) input").val();
         if (rowInsumo === insumo) {
-            existingRow = $(this);
+            existingRow = $(this); 
             return false;
         }
     });
@@ -67,7 +67,7 @@ $("#btnAñadir").on("click", function (e) {
             </td>
         `);
         const deleteButton = row.find(".btn-danger");
-        deleteButton.on("click", function () {
+        deleteButton.on("click", function() {
             row.remove();
         });
         tableBody.append(row);
@@ -87,7 +87,7 @@ $("#btnAgregar").on("click", function (e) {
     const tableBody = $("#table-body");
     const rows = tableBody.find("tr");
 
-    rows.each(function () {
+    rows.each(function() {
         const insumo = $(this).find("td:nth-child(2) input").val().trim();
         const cantidad = $(this).find("td:nth-child(3) input").val().trim();
         if (insumo !== "" && cantidad !== "") {
@@ -101,10 +101,7 @@ $("#btnAgregar").on("click", function (e) {
                     producto: producto
                 },
                 success: function (msg) {
-                    $("#txtProductos").val("");
-                    tableBody.empty();
-                    mostrar("");
-                    mostrarAlerta("¡Proceso Exitoso!", "El registro se ha creado correctamente.", "success");
+                    console.log("Registro exitoso para insumo: " + insumo);
                 },
                 error: function (xml, msg) {
                     console.log("Error al registrar insumo: " + insumo);
@@ -112,7 +109,11 @@ $("#btnAgregar").on("click", function (e) {
             });
         }
     });
-
+    $("#txtProductos").val("");
+    tableBody.empty();
+    $("#modalAgregar").modal("hide");
+    mostrar();
+    mostrarAlerta("¡Proceso Exitoso!", "El registro se ha creado correctamente.", "success");
 });
 
 $("#btnCancelar").on("click", function (e) {
@@ -202,6 +203,7 @@ $("#btnModificar").on("click", function (e) {
             $("#txtDNIE").val("");
             $("#txtUsuarioE").val("");
             $("#txtContraseñaE").val("");
+            $("#modalEditar").modal("hide");
             mostrar("");
             mostrarAlerta("¡Proceso Exitoso!", "El registro se ha modificado correctamente.", "success");
         },
@@ -309,7 +311,7 @@ function listado(idInput, idLista) {
                             li.textContent = `${item.val2}`;
                             li.addEventListener("click", () => {
                                 input.value = item.val2;
-                                lista.innerHTML = "";
+                                lista.innerHTML = ""; 
                             });
                             lista.appendChild(li);
                         });

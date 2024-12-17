@@ -1,8 +1,8 @@
 <?php
 
-$servidor = "localhost";
+$servidor = "localhost:3307";
 $usuario = "root";
-$password = "root";
+$password = "";
 $basededatos = "bdfrappe";
 
 $conexion = new mysqli($servidor, $usuario, $password, $basededatos);
@@ -10,7 +10,6 @@ $conexion = new mysqli($servidor, $usuario, $password, $basededatos);
 
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
-    die("Error al conectar a la Base de Datos: " . mysqli_connect_error());
 }
 
 ?>

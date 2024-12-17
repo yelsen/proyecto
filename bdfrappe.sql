@@ -3,11 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 10, 2024 at 06:29 AM
+-- Generation Time: Dec 09, 2024 at 06:21 PM
 -- Server version: 5.7.24
 -- PHP Version: 8.0.1
-create database bdfrappe;
-use bdfrappe;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -340,12 +338,11 @@ CREATE TABLE `catalogos` (
 --
 
 INSERT INTO `catalogos` (`idcatalogo`, `img`, `cond_cat`, `fk_idsabor`, `fk_idcategoria`, `fk_idpresentacion`) VALUES
-(1, 'frappe_clasico.png', 0, 2, 1, 1),
-(2, 'frappe_niños.png', 0, 5, 5, 2),
-(3, 'frappe_alcohol.png', 0, 8, 7, 7),
-(4, 'frappe_frutal.png', 0, 4, 6, 1),
-(5, 'frappe_vegano.png', 0, 3, 8, 2),
-(6, 'cafe_expreso.png', 0, 11, 11, 1);
+(1, 'logo_principal.png', 0, 2, 1, 1),
+(2, 'logo.png', 0, 5, 5, 2),
+(3, 'tienda de tecnología en español logo con fondo blanco.jpg', 0, 8, 7, 7),
+(4, 'mod.jpg', 0, 4, 6, 6),
+(5, 'img.jpeg', 0, 3, 8, 2);
 
 -- --------------------------------------------------------
 
@@ -363,17 +360,16 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`idcategoria`, `categoria`) VALUES
-(1, 'Frappé Clásico'),
-(2, 'Frappé de Temporada'),
-(3, 'Frappé Saludable'),
-(4, 'Frappé Gourmet'),
-(5, 'Frappé para Niños'),
-(6, 'Frappé Frutal'),
-(7, 'Frappé con Alcohol'),
-(8, 'Frappé Vegano'),
-(9, 'Frappé de Café Especial'),
-(10, 'Frappé Temático'),
-(11, 'Cafe');
+(1, 'Frappés Clásicos'),
+(2, 'Frappés de Temporada'),
+(3, 'Frappés Saludables'),
+(4, 'Frappés Gourmet'),
+(5, 'Frappés para Niños'),
+(6, 'Frappés Frutales'),
+(7, 'Frappés con Alcohol'),
+(8, 'Frappés Veganos'),
+(9, 'Frappés de Café Especial'),
+(10, 'Frappés Temáticos');
 
 -- --------------------------------------------------------
 
@@ -409,8 +405,7 @@ INSERT INTO `compras` (`idcompra`, `fecha_ingresoC`, `monto_ingresoC`, `num_comp
 (10, '2024-12-09', '24.00', '1222222', 22, 3, 2, 0),
 (11, '2024-12-09', '12.00', '12331', 12, 6, 2, 0),
 (12, '2024-12-09', '38.00', '1223555455454', 121, 1, 1, 0),
-(13, '2024-12-09', '36.00', '212212', 3, 5, 3, 0),
-(14, '2024-12-09', '30.00', '12345789', 10, 1, 2, 0);
+(13, '2024-12-09', '36.00', '212212', 3, 5, 3, 0);
 
 -- --------------------------------------------------------
 
@@ -453,9 +448,7 @@ INSERT INTO `detalle_compras` (`iddetalle_compra`, `stock_insumo`, `precio_insum
 (4, 300, '3.50', '2025-06-01', 4, 2),
 (5, 150, '20.00', '2025-06-01', 5, 3),
 (6, 120, '12.00', '2024-12-30', 5, 4),
-(7, 12, '3.00', '2024-12-26', 3, 13),
-(8, 5, '2.00', '2025-01-05', 1, 14),
-(9, 20, '1.00', '2024-12-25', 7, 14);
+(7, 12, '3.00', '2024-12-26', 3, 13);
 
 -- --------------------------------------------------------
 
@@ -474,23 +467,14 @@ CREATE TABLE `detalle_insumos` (
 --
 
 INSERT INTO `detalle_insumos` (`fk_idcatalogoD`, `fk_idinsumoD`, `cantidad_usada`) VALUES
-(3, 1, 0.12),
-(3, 2, 0.4),
-(3, 4, 0.31),
-(3, 5, 0.23),
-(4, 1, 0.5),
-(4, 2, 0.12),
-(4, 9, 0.3),
-(4, 11, 0.4),
-(5, 1, 0.01),
-(5, 2, 0.3),
-(5, 8, 0.02),
-(5, 14, 0.6),
-(6, 1, 0.06),
-(6, 3, 0.03),
-(6, 10, 0.03),
-(6, 11, 0),
-(6, 12, 0.02);
+(2, 1, 0.02),
+(2, 3, 0.05),
+(3, 1, 1),
+(3, 3, 2),
+(3, 5, 1),
+(3, 7, 1),
+(4, 4, 21),
+(5, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -541,9 +525,9 @@ CREATE TABLE `empresas` (
 --
 
 INSERT INTO `empresas` (`idempresa`, `nombre_empresa`, `RUC`, `direccion`, `telefono_em`) VALUES
-(1, 'Coca Cola S.A', '20456789012', 'Av. Principal 123', '987123456'),
-(2, 'Trujillo S.A.C', '20456789013', 'Av. Secundaria 456', '987123457'),
-(3, 'Cielo S.A', '20456789014', 'Av. Tercera 789', '987123458');
+(1, 'Empresa A', '20456789012', 'Av. Principal 123', '987123456'),
+(2, 'Empresa B', '20456789013', 'Av. Secundaria 456', '987123457'),
+(3, 'Empresa C', '20456789014', 'Av. Tercera 789', '987123458');
 
 -- --------------------------------------------------------
 
@@ -564,16 +548,9 @@ INSERT INTO `insumos` (`idinsumo`, `nombre_insumo`) VALUES
 (1, 'Azucar'),
 (2, 'Hielo'),
 (3, 'Cafe'),
-(4, 'Crema Batida'),
-(5, 'Alcohol'),
-(7, 'Cicle'),
-(8, 'Leche condensada'),
-(9, 'Cacao en Polvo'),
-(10, 'Canela'),
-(11, 'Crema'),
-(12, 'Leche'),
-(13, 'Chocolate en Polvo'),
-(14, 'Frutas');
+(4, 'Fresa'),
+(5, 'Popotes'),
+(7, 'Vasos');
 
 -- --------------------------------------------------------
 
@@ -606,13 +583,11 @@ CREATE TABLE `personales` (
 --
 
 INSERT INTO `personales` (`idpersonal`, `fecha_ingresoP`, `fk_dniPE`, `fk_idrol`) VALUES
-(1, '2024-11-30', '72345678', 3),
+(1, '2024-11-30', '72345678', 1),
 (2, '2024-11-30', '72345677', 1),
 (3, '2024-11-30', '76160748', 2),
 (4, '2024-11-30', '76160749', 1),
-(5, '2024-12-01', '12121221', 3),
-(6, '2024-12-09', '2112345', 5),
-(7, '2024-12-09', '3323', 3);
+(5, '2024-12-01', '12121221', 3);
 
 -- --------------------------------------------------------
 
@@ -633,13 +608,10 @@ CREATE TABLE `personas` (
 --
 
 INSERT INTO `personas` (`dni`, `apellidos`, `nombres`, `telefono`, `cond`) VALUES
-('12121221', 'huanuco li', 'ssss', '974345567', 1),
+('12121221', 'huanuco li', 'ssss', '974345567', 0),
 ('12345670', 'Pérez López', 'Juan', '987654321', 0),
 ('12345678', 'Gonzales Perez', 'Juan Carlos', '987654321', 0),
-('2112345', 'asas', 'qqqq', '1232', 1),
 ('23456789', 'Lopez Martinez', 'Ana Maria', '912345678', 0),
-('3323', 'qwq', 'wwqwqw', '121121', 1),
-('33321455', 'Macario Luna', 'Angel Luis', '950034567', 0),
 ('34567890', 'Ramirez Torres', 'Luis Fernando', '956789012', 0),
 ('45678901', 'Sanchez Vega', 'Carmen Julia', '978901234', 0),
 ('563', 'we qq', 'aaaa', '98765665555', 1),
@@ -647,9 +619,9 @@ INSERT INTO `personas` (`dni`, `apellidos`, `nombres`, `telefono`, `cond`) VALUE
 ('56789012', 'Diaz Salazar', 'Pedro Antonio', '987123456', 0),
 ('67890123', 'Fernandez Rios', 'Claudia Patricia', '912678345', 0),
 ('72345677', 'Perez Martinez', 'Juan', '987654321', 0),
-('72345678', 'Perez Luna', 'Carlos', '987654320', 0),
-('76160748', 'gonzales huaromo', 'yelsen', '910706967', 1),
-('76160749', 'gonzales huaromo', 'yelsen', '910706967', 1),
+('72345678', 'Perez Martinez', 'Juan', '987654321', 0),
+('76160748', 'gonzales huaromo', 'yelsen', '910706967', 0),
+('76160749', 'gonzales huaromo', 'yelsen', '910706967', 0),
 ('87654320', 'Gómez Torres', 'María', '987654322', 0);
 
 -- --------------------------------------------------------
@@ -677,8 +649,7 @@ INSERT INTO `presentaciones` (`idpresentacion`, `presentacion`) VALUES
 (7, 'Empaque para Llevar 1L'),
 (8, 'Empaque para Llevar 2L'),
 (9, 'Combo Familiar 4 Vasos Grandes'),
-(10, 'Edición Especial con Logo Personalizado'),
-(12, 'Taza');
+(10, 'Edición Especial con Logo Personalizado');
 
 -- --------------------------------------------------------
 
@@ -726,8 +697,7 @@ INSERT INTO `proveedores` (`idproveedor`, `fk_dniP`, `fk_idempresa`) VALUES
 (1, '12345670', 1),
 (2, '87654320', 2),
 (3, '56781230', 3),
-(4, '563', 1),
-(5, '33321455', 3);
+(4, '563', 1);
 
 -- --------------------------------------------------------
 
@@ -776,10 +746,7 @@ INSERT INTO `sabores` (`idsabor`, `sabor`) VALUES
 (7, 'Cookies and Cream'),
 (8, 'Mango Tropical'),
 (9, 'Avellana'),
-(10, 'Coco'),
-(11, 'Expresso'),
-(12, 'Cold Brew'),
-(13, 'Filtrado');
+(10, 'Coco');
 
 -- --------------------------------------------------------
 
@@ -829,8 +796,7 @@ INSERT INTO `usuarios` (`idusuario`, `usuario`, `psswrd`, `fk_dniU`) VALUES
 (4, 'cjulia', 'pass789', '45678901'),
 (5, 'pantonio', 'admin123', '56789012'),
 (6, 'cpatricia', 'claudia321', '67890123'),
-(7, 'BB', 'admin', '76160748'),
-(8, '11', '22', '76160749');
+(7, 'BB', 'admin', '76160748');
 
 -- --------------------------------------------------------
 
@@ -1008,19 +974,19 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT for table `catalogos`
 --
 ALTER TABLE `catalogos`
-  MODIFY `idcatalogo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idcatalogo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `idcategoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `idcategoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `compras`
 --
 ALTER TABLE `compras`
-  MODIFY `idcompra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `idcompra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `comprobantes`
@@ -1032,7 +998,7 @@ ALTER TABLE `comprobantes`
 -- AUTO_INCREMENT for table `detalle_compras`
 --
 ALTER TABLE `detalle_compras`
-  MODIFY `iddetalle_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `iddetalle_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `empresas`
@@ -1044,7 +1010,7 @@ ALTER TABLE `empresas`
 -- AUTO_INCREMENT for table `insumos`
 --
 ALTER TABLE `insumos`
-  MODIFY `idinsumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `idinsumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pagos`
@@ -1056,13 +1022,13 @@ ALTER TABLE `pagos`
 -- AUTO_INCREMENT for table `personales`
 --
 ALTER TABLE `personales`
-  MODIFY `idpersonal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `idpersonal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `presentaciones`
 --
 ALTER TABLE `presentaciones`
-  MODIFY `idpresentacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `idpresentacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `productos`
@@ -1074,31 +1040,31 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT for table `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `idproveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idproveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `idrol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idrol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `sabores`
 --
 ALTER TABLE `sabores`
-  MODIFY `idsabor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `idsabor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tipo_comprobantes`
 --
 ALTER TABLE `tipo_comprobantes`
-  MODIFY `idtipo_comprobante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idtipo_comprobante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `ventas`

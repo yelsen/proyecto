@@ -126,9 +126,20 @@ function mostrarDato($dto)
     echo ("</tbody></table></div></div>");
 }
 
-
-
-
+function generate_document_code($comprobante) {
+    global $conexion;
+    $query = "SELECT generate_document_code(?)";
+    $stmt = $conexion->prepare($query);
+    $stmt->bind_param("s", $comprobante);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($row = $result->fetch_array()) {
+        return $row[0];
+    } else {
+        return false;
+    }
+}
 
 function registrarDato($comprobante, $numero, $proveedor, $monto, $transporte)
 {
